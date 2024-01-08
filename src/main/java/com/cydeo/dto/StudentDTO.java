@@ -31,9 +31,8 @@ public class StudentDTO {
     private LocalDate birthday;
 
     private Status status;
-
-    private AddressDTO address;
     @JsonManagedReference(value = "student-address-reference")
+    private AddressDTO address;
     private ParentDTO parent;
 
 }

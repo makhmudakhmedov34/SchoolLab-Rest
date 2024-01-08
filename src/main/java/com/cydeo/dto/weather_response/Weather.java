@@ -1,9 +1,10 @@
 
-package com.cydeo.dto;
+package com.cydeo.dto.weather_response;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Generated;
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
