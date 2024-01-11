@@ -1,10 +1,11 @@
 package com.cydeo.controller;
 
+import com.cydeo.dto.ResponseWrapper;
 import com.cydeo.dto.TeacherDTO;
 import com.cydeo.service.TeacherService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +23,17 @@ public class TeachersController {
     public List<TeacherDTO> getAllTeachers(){
        List<TeacherDTO> listTeachers = teacherService.findAll();
        return listTeachers;
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseWrapper> createTeacher(@RequestBody TeacherDTO teacherDTO){
+
+        TeacherDTO teacher = teacherService.createTeacher(teacherDTO);
+        ResponseWrapper responseWrapper = new ResponseWrapper(true,"Teacher is created successfully",
+                HttpStatus.CREATED.value(),teacher);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header("teacherId",String.valueOf(teacher.getId()))
+                .body(responseWrapper);
     }
 
 
