@@ -18,7 +18,7 @@ public class AddressController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWrapper> getAddress(@PathVariable("id") Long id) throws Exception {
-        return ResponseEntity.ok(new ResponseWrapper("Address" +id+"is successfully retrieved",addressService.findById(id)));
+        return ResponseEntity.ok(new ResponseWrapper("Address " +id+" retrieved successfully",addressService.findById(id)));
     }
 
     @PutMapping("/{id}")

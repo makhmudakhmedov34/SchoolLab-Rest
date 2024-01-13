@@ -1,7 +1,10 @@
 package com.cydeo.service.impl;
 
+
+import com.cydeo.client.FlagsApiClient;
 import com.cydeo.client.WeatherApiClient;
 import com.cydeo.dto.AddressDTO;
+import com.cydeo.dto.country_flag.ResponseCountry;
 import com.cydeo.dto.weather_response.Weather;
 import com.cydeo.entity.Address;
 import com.cydeo.exception.NotFoundException;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,11 +29,13 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
     private final MapperUtil mapperUtil;
     private final WeatherApiClient weatherApiClient;
+    private final FlagsApiClient flagsApiClient;
 
-    public AddressServiceImpl(AddressRepository addressRepository, MapperUtil mapperUtil, WeatherApiClient weatherApiClient) {
+    public AddressServiceImpl(AddressRepository addressRepository, MapperUtil mapperUtil, WeatherApiClient weatherApiClient, FlagsApiClient flagsApiClient) {
         this.addressRepository = addressRepository;
         this.mapperUtil = mapperUtil;
         this.weatherApiClient = weatherApiClient;
+        this.flagsApiClient = flagsApiClient;
     }
 
     @Override
@@ -47,7 +53,20 @@ public class AddressServiceImpl implements AddressService {
 
         AddressDTO  addressDTO = mapperUtil.convert(foundAddress, new AddressDTO());
         addressDTO.setCurrentTemperature(retrieveTemperatureByCity(addressDTO.getCity()));
+        addressDTO.setFlag(retrieveFlagByCountry(addressDTO.getCountry()));
         return addressDTO;
+    }
+
+    private String retrieveFlagByCountry(String country) {
+        List<ResponseCountry> flags = flagsApiClient.getFlagByCountry(country);
+
+        flags.stream().filter(i -> i != null || i.getFlags()!=null)
+                .findFirst()
+                .map(i -> i.getFlags().getPng())
+                .orElseThrow(() -> new NotFoundException("Flags not found"));
+
+
+        return flags.get(0).getFlags().getPng();
     }
 
     private Integer retrieveTemperatureByCity(String city) {
